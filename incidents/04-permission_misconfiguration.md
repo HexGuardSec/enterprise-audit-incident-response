@@ -30,7 +30,7 @@ Expected output:
 -rwxrwxrwx 1 root root 30 Dec 10 10:12 secrets.txt
 ```
 
-📸 Screenshot: `screenshots/04-permission_misconfiguration/permission_before.png`
+📸 Screenshot: `screenshots/04-permission-misconfiguration/permissions_before.png`
 
 ---
 
@@ -60,7 +60,7 @@ Expected output:
 -rw-r----- 1 root security 30 Dec 10 10:15 secrets.txt
 ```
 
-📸 Screenshot: `screenshots/04-permission_misconfiguration/permission_after.png`
+📸 Screenshot: `screenshots/04-permission-misconfiguration/permissions_after.png`
 
 ---
 
@@ -76,7 +76,7 @@ cat /opt/finance/secrets.txt
 
 Expected result: `Permission denied`
 
-📸 Screenshot: `screenshots/04-permission_misconfiguration/user_access_denied.png`
+📸 Screenshot: `screenshots/04-permission-misconfiguration/user_access_denied.png`
 
 ---
 
