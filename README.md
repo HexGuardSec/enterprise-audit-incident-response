@@ -11,171 +11,193 @@
 
 ## 🧩 **Overview**
 
-This lab simulates **real enterprise security incidents** faced by Internal IT Engineers and SOC Level 1 Analysts.
-Each scenario focuses on **misconfigurations, suspicious activity, privilege issues, unauthorized services**, and improper system hygiene.
+This lab simulates **real enterprise incidents** faced by Internal IT Engineers and SOC Level 1 Analysts.
+Each scenario focuses on:
 
-The objective of this lab is to demonstrate:
+* Misconfigurations
+* Unauthorized services
+* Privilege issues
+* Suspicious network activity
+* Poor system hygiene
+* Log-based investigations
 
-* Real investigation workflows
-* Linux system auditing
-* Root cause analysis
-* Remediation of security issues
-* Professional reporting
+The goal is to demonstrate **true hands-on technical ability**, not theory — exactly what companies expect during junior IT / SOC technical interviews.
 
 ---
 
 # 📁 **Completed Incident Scenarios**
 
-Here are the incidents you **already completed**, rewritten in a clean SOC style.
+Below are all scenarios completed so far, rewritten in a **clean SOC-style format**.
 
 ---
 
 ## 🔹 **1. Sudo Access Leak (Privilege Misuse)**
 
-A user retained **sudo privileges** after a temporary role change, even though the elevated rights were **unused for 6+ months**.
+A user retained **sudo privileges** after a temporary role upgrade, even though the elevated rights were unused for months.
 
 ### ✔ Investigation
 
-* Identified all sudo-capable users
-* Cross-checked `/var/log/auth.log` for sudo activity
-* Confirmed user inactivity
+* Enumerated sudo-capable users
+* Analyzed `/var/log/auth.log` for sudo usage
+* Confirmed complete inactivity
 
 ### ✔ Remediation
 
 * Removed unnecessary sudo rights
-* Documented the privilege cleanup
-* Validated no privilege escalation vectors remained
+* Cleaned rules in `/etc/sudoers.d`
+* Validated system behavior post-removal
 
 ---
 
-## 🔹 **2. Unknown SSH Service (Suspicious Service on System)**
+## 🔹 **2. Unknown SSH Service (Suspicious Service Running)**
 
-A secondary SSH service binary was found running with unknown origin.
+An unexpected SSH-like service was running with its own binary and configuration.
 
 ### ✔ Investigation
 
-* Enumerated running services using `ps`, `systemctl`, and `ss -tulpn`
-* Located unexpected SSH binary
-* Checked persistence mechanisms
+* Reviewed running processes and services (`ps`, `systemctl`, `ss -tulpn`)
+* Located the unknown binary
+* Searched for persistence or malicious scripts
 
 ### ✔ Remediation
 
-* Disabled and removed unauthorized service
-* Cleaned leftover files
-* Validated system integrity
+* Disabled the unauthorized service
+* Removed its binary and config
+* Ensured no persistence mechanism remained
 
 ---
 
 ## 🔹 **3. Crontab Abuse (Unauthorized Scheduled Task)**
 
-A cron task existed without documentation, ownership justification, or approval.
+A cron task existed without documentation or ownership, suggesting abandoned automation or potential malicious activity.
 
 ### ✔ Investigation
 
-* Inspected `/etc/crontab`, `/etc/cron.*`, and user crontabs
-* Traced file modification history
-* Identified orphaned or suspicious script
+* Checked `/etc/crontab`, `/etc/cron.*`, and user crontabs
+* Inspected script content and timestamps
+* Verified user activity history
 
 ### ✔ Remediation
 
-* Removed unauthorized cron entry
-* Checked for associated malicious scripts
-* Ensured no persistence mechanisms remained
+* Removed the suspicious cron entry
+* Deleted or archived leftover scripts
+* Performed full validation of scheduled task integrity
 
 ---
 
 ## 🔹 **4. Permissions Misconfiguration**
 
-A directory or file had excessively permissive rights (e.g. `777`, `775`, or world-writable logs), posing a confidentiality or integrity risk.
+A directory had **dangerously permissive rights**, allowing unauthorized access or modification.
 
 ### ✔ Investigation
 
-* Identified abnormal permissions
-* Checked access history and responsible users
-* Mapped potential exploitation paths
+* Identified dangerous permission patterns (`777`, world-writable, etc.)
+* Mapped which users had access and why
+* Evaluated potential exploitation vectors
 
 ### ✔ Remediation
 
-* Set appropriate ownership and permissions
-* Restricted access following least-privilege model
-* Confirmed correct behavior after changes
+* Reapplied correct permissions and ownership
+* Ensured least-privilege model
+* Tested impacted applications after the fix
 
 ---
 
 ## 🔹 **5. Unknown Port Listener (Suspicious Network Activity)**
 
-A process was listening on a non-standard port with no ticket or documented service.
+A process was listening on a non-standard port without documentation.
 
 ### ✔ Investigation
 
-* Used `ss`, `netstat`, and `lsof` to map processes
-* Verified binary paths and parent processes
-* Checked logs for suspicious connections
+* Mapped port-to-process using `ss`, `netstat`, `lsof`
+* Inspected binary origin and parent processes
+* Reviewed logs for unusual remote connections
 
 ### ✔ Remediation
 
-* Disabled or removed rogue listener
-* Applied hardening to prevent recreation
-* Documented findings and actions
+* Disabled and removed the rogue service
+* Audited system for related artefacts
+* Added monitoring rules to detect recurrence
+
+---
+
+## 🔹 **6. Orphaned Home Directory (Residual Artefact After User Deletion)**
+
+A directory `/home/olduser` remained on the system even though the account **no longer existed**, representing poor system hygiene and potential data exposure.
+
+### ✔ Investigation
+
+* Listed home directories → detected `/home/olduser`
+* Checked `/etc/passwd` → no `olduser` entry found
+* Examined file contents and modification dates
+
+### ✔ Findings
+
+* The user account was deleted
+* The home directory **was not removed during deletion**
+* Sensitive data or scripts could have remained
+
+### ✔ Remediation
+
+* Removed the orphaned directory:
+
+  ```bash
+  sudo rm -rf /home/olduser
+  ```
+* Verified cleanup in `/home`
+* Confirmed no references in sudoers, cron, groups, services
+
+### ✔ SOC Summary
+
+Residual artefacts after account deletion can expose internal data.
+Cleanup completed and system hygiene restored.
 
 ---
 
 # 🛠️ **Tools & Techniques Used**
 
-* `journalctl` – log analysis
-* `ss`, `netstat`, `lsof` – network & process enumeration
-* `ps aux`, `systemctl` – service investigation
-* `find`, `grep`, `awk` – file search & filtering
-* `visudo`, `/etc/sudoers.d` – privilege audits
-* `crontab`, `/etc/cron.*` – scheduled tasks review
-* System hardening and remediation
+* `journalctl` — log analysis
+* `ps aux`, `systemctl` — process & service audit
+* `ss`, `lsof` — network port investigation
+* `find`, `grep`, `awk` — targeted search & filtering
+* `visudo`, `/etc/sudoers.d` — privilege auditing
+* `crontab`, `/etc/cron.*` — scheduled task inspection
+* Linux hardening & security validation
 
 ---
 
-# 📸 **Screenshots Folder**
+# 📸 **Screenshots**
 
-All evidence (logs, commands, outputs, investigation notes) is stored inside:
+Evidence for each incident is stored in:
 
 ```
 /screenshots/
 ```
 
-Screenshots are named per incident for clarity.
+Screenshots include commands, findings, logs, and validation steps.
 
 ---
 
-# 📘 **Documentation Method**
+# 📘 **Documentation Structure**
 
-Each incident includes:
+Each incident follows this structure:
 
 * Description
 * Investigation steps
 * Findings
 * Remediation
 * Validation
-* Final SOC-style summary
+* SOC-style summary
 
 ---
 
 # 🚀 **Planned Additions**
 
-Future scenarios to include:
+Future simulated incidents include:
 
 * SSH brute-force detection
-* Unauthorized key installation
-* SUID exploitation detection
+* Unauthorized SSH key installation
+* SUID escalation attempts
 * Suspicious log pattern analysis
+* Firewall misconfigurations
 * Network anomaly detection
-* Rudimentary SIEM-style triage
-
----
-
-# 🎯 **Purpose of This Lab**
-
-This project demonstrates your growing ability as a:
-
-* Internal IT Engineer
-* SOC Level 1 Analyst
-* Linux Security Technician
-
-It showcases **real technical skills**, not theory — exactly what Japanese companies want to see from a junior engineer.
